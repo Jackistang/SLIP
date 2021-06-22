@@ -1,0 +1,29 @@
+@startuml
+
+state unknown as "Unknown State"
+state frame_start as "Frame Start State"
+state decoding as "Decoding State"
+state frame_end as "Frame End State"
+state error as "Error State"
+
+[*] --> unknown
+' unknown --> unknown : others
+unknown --> frame_start : 0xCO
+note on link 
+Receive byte 0xC0.
+end note
+' frame_start --> frame_start : 0xCO
+frame_start --> decoding : others
+note on link 
+Receive byte except 0xC0.
+end note
+' decoding --> decoding : others
+decoding --> frame_end : 0xC0
+
+frame_end --> error : others
+frame_end --> decoding : 0xC0
+
+' error --> error : others
+error --> frame_end : 0xC0
+
+@enduml

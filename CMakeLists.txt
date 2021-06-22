@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION  3.15)
+cmake_minimum_required(VERSION  3.12)
 
 project(slip)
 
@@ -6,7 +6,7 @@ set (CMAKE_BUILD_TYPE "Debug")
 
 set(SOURCES
     slip.c
-    test_slip.c
+    tests/test_slip.c
     3rd-party/ringbuffer.c
 )
 
