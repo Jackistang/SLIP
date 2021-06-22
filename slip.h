@@ -31,7 +31,7 @@ struct slip {
 };
 struct slip_config {
     /* Send data to uart. */
-    int (*send)(uint8_t *buffer, uint16_t length);
+    void (*send)(uint8_t *buffer, uint16_t length);
 
     /**
      * @brief Receive data from uart.
@@ -44,7 +44,7 @@ struct slip_config {
 };
 
 /**
- * @brief Register a slip handler.
+ * @brief Init a slip handler.
  * 
  * @param handler   slip handler point. 
  * @param config    slip configuration structure.
@@ -53,8 +53,15 @@ struct slip_config {
  * @retval 0        Success.
  * @retval -1       Error.
 */
-int slip_register_handler(struct slip *handler, struct slip_config *config);
+int slip_init(struct slip *handler, struct slip_config *config);
 
+/**
+ * @brief Reset slip state.
+ * 
+ * @param handler   slip handler point.
+ * 
+ * @return void
+*/
 void slip_reset(struct slip *handler);
 
 /**

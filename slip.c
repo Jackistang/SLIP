@@ -8,7 +8,7 @@
 #define SLIP_ESC_ESC    0xDD    //  ESC ESC_ESC means ESC data byte
 
 
-int slip_register_handler(struct slip *handler, struct slip_config *config)
+int slip_init(struct slip *handler, struct slip_config *config)
 {
     SLIP_ASSERT(handler);
     SLIP_ASSERT(config);

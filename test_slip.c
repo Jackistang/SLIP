@@ -17,7 +17,7 @@ static void buffer_reset(void)
     left = right = 0;
 }
 
-static int send(uint8_t *buf, uint16_t length)
+static void send(uint8_t *buf, uint16_t length)
 {
     for (size_t i = 0; i < length; i++) {
         buffer[right++] = buf[i];
@@ -26,9 +26,9 @@ static int send(uint8_t *buf, uint16_t length)
             right = 0;
         // buffer is full.
         if (right == left)
-            return i;
+            return ;
     }
-    return length;
+    return ;
 }
 
 static int recv(uint8_t *buf, uint16_t length)
@@ -57,7 +57,7 @@ static struct slip_config config = {
  */
 int init_suite(void)
 {
-    int err = slip_register_handler(&slip_handler, &config);
+    int err = slip_init(&slip_handler, &config);
     // CU_ASSERT_EQUAL(err, 0);
     return 0;
 }
