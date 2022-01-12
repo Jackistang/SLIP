@@ -100,6 +100,7 @@ TEST_GROUP(DecoderTestGroup)
         ret = slip_decoder_process_byte(&decoder, data[i]); \
         CHECK_EQUAL(SLIP_SUCCESS, ret); \
         CHECK_FALSE(slip_decoder_has_frame(&decoder));  \
+        POINTERS_EQUAL(NULL, slip_decoder_get_frame(&decoder)); \
     }   \
         \
     ret = slip_decoder_process_byte(&decoder, data[i]); \
@@ -134,7 +135,7 @@ TEST(DecoderTestGroup, TestDecoderSuccessNoEscape)
 */
 TEST(DecoderTestGroup, TestDecoderSuccessUnknownState)
 {
-    uint8_t data[] = {0x00, 0x00, 0x00, 0xC0, 0x00, 0xFF, 0xC0};
+    uint8_t data[] = {0x00, 0x00, 0x00, 0xC0, 0xC0, 0x00, 0xFF, 0xC0};
     uint8_t expect[] = {0x00, 0xFF};
     TEST_DECODER_SUCCESS(data, expect);
 }
@@ -197,6 +198,26 @@ TEST(DecoderTestGroup, TestDecoderSuccess3Wire)
 {
     uint8_t data[] = {0xC0, 0xDB, 0xDE, 0xDB, 0xDF, 0xC0};
     uint8_t expect[] = {0x11, 0x13};
+    TEST_DECODER_SUCCESS(data, expect);
+}
+
+/**
+ * 测试解码器缓冲区太小
+*/
+TEST(DecoderTestGroup, TestDecoderFailSmallBuffer)
+{
+    uint8_t small_buf[1];
+    slip_decoder_deinit(&decoder);
+    slip_decoder_init(&decoder, small_buf, ARRAY_SIZE(small_buf));
+
+    int ret = 0;
+    uint8_t data[] = {0xC0, 0x00, 0xFF, 0xC0};
+    ret = slip_decoder_process_byte(&decoder, data[0]);
+    CHECK_EQUAL(SLIP_SUCCESS, ret);
+    ret = slip_decoder_process_byte(&decoder, data[1]);
+    CHECK_EQUAL(SLIP_SUCCESS, ret);
+    ret = slip_decoder_process_byte(&decoder, data[2]);
+    CHECK_EQUAL(-SLIP_NOMEMORY, ret);
 }
 
 int main(int ac, char** av)
